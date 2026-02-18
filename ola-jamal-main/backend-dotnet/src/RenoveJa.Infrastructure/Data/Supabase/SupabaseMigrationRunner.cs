@@ -46,6 +46,15 @@ public static class SupabaseMigrationRunner
         "ALTER TABLE public.requests ADD COLUMN IF NOT EXISTS access_code TEXT"
     };
 
+    private static readonly string[] PrescriptionProfileFieldsMigrations =
+    {
+        "ALTER TABLE public.users ADD COLUMN IF NOT EXISTS gender VARCHAR(20)",
+        "ALTER TABLE public.users ADD COLUMN IF NOT EXISTS address TEXT",
+        "ALTER TABLE public.doctor_profiles ADD COLUMN IF NOT EXISTS professional_address TEXT",
+        "ALTER TABLE public.doctor_profiles ADD COLUMN IF NOT EXISTS professional_phone VARCHAR(30)",
+        "ALTER TABLE public.requests ADD COLUMN IF NOT EXISTS prescription_kind VARCHAR(30)"
+    };
+
     private static readonly string[] DoctorCertificatesMigrations =
     {
         """
@@ -335,6 +344,7 @@ public static class SupabaseMigrationRunner
         {
             ("password_reset_tokens", PasswordResetTokensMigrations),
             ("request_ai_columns", RequestAiColumns),
+            ("prescription_profile_fields", PrescriptionProfileFieldsMigrations),
             ("doctor_certificates", DoctorCertificatesMigrations),
             ("audit_logs", AuditLogsMigrations),
             ("notifications", NotificationsMigrations),

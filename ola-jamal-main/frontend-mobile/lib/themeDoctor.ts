@@ -1,6 +1,6 @@
 /**
- * Tema apenas para as telas do médico (Stitch: Ocean Blue Medical)
- * Dark, #0040b8, Plus Jakarta Sans, ROUND_TWELVE
+ * Tema das telas do médico – claro (light)
+ * #0040b8, Plus Jakarta Sans
  */
 
 export const colors = {
@@ -12,14 +12,14 @@ export const colors = {
   secondaryDark: '#059669',
   accent: '#8B5CF6',
   accentSoft: '#EDE9FE',
-  background: '#121212',
-  surface: '#1E1E1E',
-  surfaceSecondary: '#252525',
-  text: '#FFFFFF',
-  textSecondary: '#94A3B8',
+  background: '#F8FAFC',
+  surface: '#FFFFFF',
+  surfaceSecondary: '#F1F5F9',
+  text: '#0F172A',
+  textSecondary: '#475569',
   textMuted: '#64748B',
-  border: '#334155',
-  borderLight: '#475569',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
   error: '#EF4444',
   errorLight: '#FEE2E2',
   warning: '#F59E0B',

@@ -74,15 +74,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadStoredUser();
   }, []);
 
-  // Timeout de segurança: se após 3s ainda estiver loading, libera a tela (evita loading infinito)
+  // Timeout de segurança: se após 2s ainda estiver loading, libera a tela (evita loading infinito)
   useEffect(() => {
     const t = setTimeout(() => {
       setLoading((prev) => (prev ? false : prev));
-    }, 3000);
+    }, 2000);
     return () => clearTimeout(t);
   }, []);
 
   const loadStoredUser = async () => {
+    // Fallback: se AsyncStorage/rede travar, libera a tela em no máximo 2.5s
+    const guard = setTimeout(() => setLoading(false), 2500);
     try {
       const storedToken = await AsyncStorage.getItem(TOKEN_KEY);
       const storedUser = await AsyncStorage.getItem(USER_KEY);
@@ -97,12 +99,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             parsedDoctorProfile = JSON.parse(storedDoctorProfile) as DoctorProfileDto | null;
           }
         } catch {
+          clearTimeout(guard);
           await clearAuth();
           setLoading(false);
           return;
         }
 
         // Mostra o app na hora com usuário em cache; valida token em background
+        clearTimeout(guard);
         setUser(parsedUser);
         if (parsedDoctorProfile) setDoctorProfile(parsedDoctorProfile);
         setLoading(false);
@@ -128,6 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error loading stored user:', error);
       await clearAuth();
+    } finally {
+      clearTimeout(guard);
     }
     setLoading(false);
   };
@@ -142,9 +148,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!response?.user) {
         throw new Error('Resposta inválida do servidor. Tente novamente.');
       }
+      if (response.token == null || response.token === '') {
+        throw new Error('Servidor não retornou token de acesso. Tente novamente.');
+      }
 
-      await setItemSafe(TOKEN_KEY, response.token ?? undefined);
-      await setItemSafe(USER_KEY, response.user ? JSON.stringify(response.user) : undefined);
+      await setItemSafe(TOKEN_KEY, response.token);
+      await setItemSafe(USER_KEY, JSON.stringify(response.user));
 
       if (response.doctorProfile) {
         await setItemSafe(

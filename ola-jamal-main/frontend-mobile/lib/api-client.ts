@@ -113,9 +113,15 @@ class ApiClient {
     if (contentType.includes('application/json')) {
       return await response.json();
     }
-    // Ngrok (ou outro proxy) pode devolver HTML de "browser warning" em vez do JSON; o header ngrok-skip-browser-warning evita isso.
-    if (contentType.includes('text/html') && __DEV__) {
-      console.warn('[API] Resposta 200 com content-type text/html (possível página ngrok). Use baseUrl com ngrok-skip-browser-warning.');
+    // Ngrok devolve HTML de "browser warning" quando o header ngrok-skip-browser-warning não é aceite. Tratar como erro.
+    if (contentType.includes('text/html')) {
+      if (__DEV__) {
+        console.warn('[API] Resposta 200 com content-type text/html (página ngrok). Verifique EXPO_PUBLIC_API_URL e se o header ngrok-skip-browser-warning está sendo enviado.');
+      }
+      throw {
+        message: 'A API retornou uma página em vez de dados. Se estiver usando ngrok, confira a URL da API (EXPO_PUBLIC_API_URL) e tente novamente.',
+        status: 502,
+      } as ApiError;
     }
     // For text responses (like PIX code)
     return (await response.text()) as unknown as T;
