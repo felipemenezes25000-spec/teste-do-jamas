@@ -1,0 +1,20 @@
+# Cursor / IDE
+.cursor/
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs e env
+*.log
+.env
+.env.local
+.env.*.local
+
+# Build / cache (complementa os .gitignore dos subprojetos)
+**/bin/
+**/obj/
+**/.expo/
